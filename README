@@ -1,0 +1,48 @@
+# cancer-dependency
+How to run the service app (will be available at localhost port 5000):
+
+from the command line:
+make run
+
+for running test, from the command line use:
+make test
+
+you can also run it using the docker file
+the commands used to build the docker image and run the file are: 
+ build the image:
+    docker image build -t flask_docker .
+ 
+ run the image: 
+    docker run -p 5000:5000 -d flask_docker
+
+
+File descriptions:
+
+README - short descriptions of each file and instructions for running the service
+Makefile - simple Makefile to interact with provided code
+app.py - code for a Flask application
+db.py - code for reading csv file
+requirements.txt - list of python requirements to be installed via pip
+test_client.py - code for a requests based test client
+Dockerfile - to create the docker image and run the image once created
+
+testing framework: 
+unittest
+
+testing strategy: 
+1. test cases are written for get gene, cell_line and gene cell_line pair for a tcga hotspot
+
+logic: 
+1. used pandas to read the csv file and filter the csv file based on gene, cell_line and tcga
+2. reused the /cell_lines api to access a optional cell_line_id as a URL parameter and the gene and optional tcga boolean. If the cell_line_id is present it will return the gene cell_line pair that are tcga hotspots. If the cell_line_id is not present then it will return all the cell_lines for which the gene is a tcga hotspot for
+3. /genes api is used to return a list of genes which filters the cell_line_id as a query parameter. This can further be enhanced if a particular gene_id is required - similar to /cell_lines as explaint in #2
+4. wrote test cases to handle valid tests and any bad errors
+5. also created a makefile to run the tests and the application incase a docker is not used
+6. seperated the test cases in test_client.py, the logic in db.py which basically interacts with the dataset, and the api specification and any api logic in app.py
+
+error handling: 
+1. for all api errors a class is created with the status code and a custom description
+2. using the errorhandler decorator the code and description are returned 
+3. classes are created so that in the future if they need to be changed we will just have to change it at one place 
+4. exceptions are raised where appropriate in the app.py file 
+
